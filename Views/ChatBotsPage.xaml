@@ -1,0 +1,177 @@
+<Page x:Class="HotelBookingTasks.Views.ChatBotsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      Title="ChatBotsPage"
+      Background="{DynamicResource BackgroundBrush}">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="16"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel>
+            <TextBlock Text="Чат-боты"
+                       Style="{StaticResource TitleTextBlockStyle}"/>
+            <TextBlock Text="Сценарные боты для обработки типовых команд по бронированию и информационной поддержке клиентов."
+                       Foreground="{DynamicResource MutedTextBrush}"/>
+        </StackPanel>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="320"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Style="{StaticResource CardBorderStyle}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="12"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="12"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Сценарий"
+                               Style="{StaticResource SubtitleTextBlockStyle}"/>
+
+                    <ComboBox Grid.Row="2"
+                              ItemsSource="{Binding BotScenarios}"
+                              SelectedItem="{Binding SelectedBotScenario, Mode=TwoWay}"
+                              DisplayMemberPath="Name"/>
+
+                    <TextBlock Grid.Row="4"
+                               Text="{Binding SelectedBotScenario.Description}"
+                               Foreground="{DynamicResource MutedTextBrush}"
+                               TextWrapping="Wrap"/>
+
+                    <TextBlock Grid.Row="6"
+                               Text="Быстрые команды"
+                               FontWeight="SemiBold"/>
+
+                    <ItemsControl Grid.Row="8"
+                                  ItemsSource="{Binding QuickCommands}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Content="{Binding Title}"
+                                        Command="{Binding DataContext.RunQuickCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                        CommandParameter="{Binding Command}"
+                                        ToolTip="{Binding Description}"
+                                        Style="{StaticResource SecondaryButtonStyle}"
+                                        MinWidth="120"
+                                        Margin="0,0,8,8"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+            </Border>
+
+            <Border Grid.Column="2"
+                    Style="{StaticResource CardBorderStyle}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="12"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="12"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Left">
+                            <TextBlock Text="{Binding SelectedBotScenario.Name}"
+                                       Style="{StaticResource SubtitleTextBlockStyle}"/>
+                            <TextBlock Text="История обращений и ответов сценарного бота."
+                                       Foreground="{DynamicResource MutedTextBrush}"/>
+                        </StackPanel>
+
+                        <Button Content="Очистить"
+                                Command="{Binding ClearChatCommand}"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                MinWidth="120"
+                                HorizontalAlignment="Right"
+                                DockPanel.Dock="Right"/>
+                    </DockPanel>
+
+                    <ListBox x:Name="MessagesListBox"
+                             Grid.Row="2"
+                             ItemsSource="{Binding Messages}"
+                             BorderThickness="0"
+                             Padding="0"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border x:Name="MessageBubble"
+                                        Background="#F8FAFD"
+                                        BorderBrush="{DynamicResource BorderBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="8"
+                                        Padding="12"
+                                        Margin="0,0,0,10">
+                                    <StackPanel>
+                                        <DockPanel Margin="0,0,0,6">
+                                            <TextBlock Text="{Binding SenderName}"
+                                                       FontWeight="SemiBold"
+                                                       DockPanel.Dock="Left"/>
+                                            <TextBlock Text="{Binding CreatedAt, StringFormat={}{0:dd.MM.yyyy HH:mm:ss}}"
+                                                       Foreground="{DynamicResource MutedTextBrush}"
+                                                       FontSize="12"
+                                                       HorizontalAlignment="Right"
+                                                       DockPanel.Dock="Right"/>
+                                        </DockPanel>
+
+                                        <TextBlock Text="{Binding Text}"
+                                                   TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding IsUserMessage}" Value="True">
+                                        <Setter TargetName="MessageBubble"
+                                                Property="Background"
+                                                Value="#DCEBFF"/>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <Grid Grid.Row="4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox x:Name="CommandTextBox"
+                                 Text="{Binding UserInput, UpdateSourceTrigger=PropertyChanged}"
+                                 KeyDown="CommandTextBox_KeyDown"
+                                 Height="38"
+                                 Margin="0,0,8,0"
+                                 VerticalContentAlignment="Center"/>
+
+                        <Button Grid.Column="1"
+                                Content="Отправить"
+                                Command="{Binding SendCommand}"
+                                MinWidth="130"
+                                Margin="0"/>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Page>

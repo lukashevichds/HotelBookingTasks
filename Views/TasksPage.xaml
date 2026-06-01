@@ -1,0 +1,123 @@
+<Page x:Class="HotelBookingTasks.Views.TasksPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      Title="TasksPage"
+      Background="{DynamicResource BackgroundBrush}">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="16"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="16"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel>
+            <TextBlock Text="Задачи"
+                       Style="{StaticResource TitleTextBlockStyle}"/>
+            <TextBlock Text="Сводный список автоматически сформированных и пользовательских задач по бронированиям."
+                       Foreground="{DynamicResource MutedTextBrush}"/>
+        </StackPanel>
+
+        <UniformGrid Grid.Row="2"
+                     Columns="3"
+                     Margin="0,0,0,16">
+            <Border Style="{StaticResource CardBorderStyle}">
+                <StackPanel>
+                    <TextBlock Text="Всего задач"
+                               Foreground="{DynamicResource MutedTextBrush}"/>
+                    <TextBlock Text="{Binding TotalTasks}"
+                               FontSize="28"
+                               FontWeight="SemiBold"/>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource CardBorderStyle}">
+                <StackPanel>
+                    <TextBlock Text="Активные"
+                               Foreground="{DynamicResource MutedTextBrush}"/>
+                    <TextBlock Text="{Binding ActiveTasks}"
+                               FontSize="28"
+                               FontWeight="SemiBold"/>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource CardBorderStyle}">
+                <StackPanel>
+                    <TextBlock Text="Просроченные"
+                               Foreground="{DynamicResource MutedTextBrush}"/>
+                    <TextBlock Text="{Binding OverdueTasks}"
+                               FontSize="28"
+                               FontWeight="SemiBold"/>
+                </StackPanel>
+            </Border>
+        </UniformGrid>
+
+        <Border Grid.Row="4"
+                Style="{StaticResource CardBorderStyle}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="12"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Обновить список"
+                            Command="{Binding LoadTasksCommand}"
+                            MinWidth="150"/>
+
+                    <Button Content="Отметить выполненной"
+                            Command="{Binding MarkCompletedCommand}"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            MinWidth="190"/>
+
+                    <Button Content="Проверить просрочку"
+                            Command="{Binding RefreshExpiredTasksCommand}"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            MinWidth="180"/>
+
+                    <Button Content="Удалить задачу"
+                            Command="{Binding DeleteTaskCommand}"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            MinWidth="150"/>
+                </StackPanel>
+
+                <DataGrid Grid.Row="2"
+                          ItemsSource="{Binding Tasks}"
+                          SelectedItem="{Binding SelectedTask, Mode=TwoWay}"
+                          CanUserResizeRows="False"
+                          SelectionMode="Single">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID"
+                                            Binding="{Binding Id}"
+                                            Width="0.7*"/>
+                        <DataGridTextColumn Header="Бронирование"
+                                            Binding="{Binding BookingDisplay}"
+                                            Width="1.7*"/>
+                        <DataGridTextColumn Header="Клиент"
+                                            Binding="{Binding GuestName}"
+                                            Width="1.4*"/>
+                        <DataGridTextColumn Header="Название"
+                                            Binding="{Binding Title}"
+                                            Width="1.8*"/>
+                        <DataGridTextColumn Header="Описание"
+                                            Binding="{Binding Description}"
+                                            Width="2.2*"/>
+                        <DataGridTextColumn Header="Срок"
+                                            Binding="{Binding Deadline, StringFormat=dd.MM.yyyy HH:mm}"
+                                            Width="1.5*"/>
+                        <DataGridTextColumn Header="Приоритет"
+                                            Binding="{Binding Priority}"
+                                            Width="1*"/>
+                        <DataGridTextColumn Header="Статус"
+                                            Binding="{Binding EffectiveStatus}"
+                                            Width="1.2*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
+    </Grid>
+</Page>
